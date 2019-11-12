@@ -1,0 +1,26 @@
+{
+"manifest_version": 2,
+"name": "InstaGarden",
+"version": "0.0.0.3",
+"description": "gain real followers while not getting blocked on Instagram",
+"icons": {
+  "16": "images/logoa16x16.jpg",
+  "64": "images/logoa64x64.jpg",
+  "128": "images/logoa128x128.jpg"
+},
+"browser_action": {
+  "default_popup": "popup.html"
+},
+"content_scripts": [
+  { "js": ["followers.js"],
+    "matches": ["https://www.instagram.com/*"]
+  }
+],
+"background": {
+  "scripts": ["background.js"],
+  "persistent": false
+},
+"permissions": [
+   "storage","tabs"
+]
+}
