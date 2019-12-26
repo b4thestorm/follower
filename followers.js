@@ -1,27 +1,50 @@
 //this is a content script -  need to exchange messages from content script and background script
-// document.addEventListener('DOMContentLoaded', function() {
-function unfollow(settings) {
+
+function unfollow(request) {
+  var handles;
+  var followingButton;
+  var startTimeout;
   var base = "https://www.instagram.com/"
-  debugger
-  var handles = chrome.storage.sync.get('followList') //make sure thid returns a value
-  console.log(handles)
+
+  if (request.command === 'unfollow') {
+    handles = localStorage.getItem('followList'+ request.listCount)
+    handles = handles.split(',').slice(0,request.quantityUnfollow)
+  }
+
+  if (request.command === 'nuclear') {
+    handles = request['unfollowPayload']
+  }
+
   const win = window.open(base + handles[0] + '/', "_blank");
   var i = 1;
-
   var interval = setInterval(function(){
     //check that the button says 'Following'
-     var followingButton = win.document.querySelector("#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button").click();
+    followingButton = win.document.querySelector("#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button");
+    if (followingButton === null) {
+      followingButton = win.document.querySelector("#react-root > section > main > div > header > section > div.nZSzR > button");
+    }
 
-       var startTimeout= setTimeout(function(){
-          alert('was successful');
-       }, 100);
-       clearTimeout(startTimeout)
-       //supposedly runs after 61secs
-       win.document.querySelector("body > div.RnEpo.Yx5HN > div > div > div.mt3GC > button.aOOlW.-Cab_").click()
-       //remove unfollowed handle
-       
+    if (followingButton.innerHTML === 'Following') {
+      followingButton.click();
+
+      startTimeout = setTimeout(function(){
+        alert('was successful');
+        }, 100);
+      clearTimeout(startTimeout)
+
+      win.document.querySelector("body > div.RnEpo.Yx5HN > div > div > div.mt3GC > button.aOOlW.-Cab_").click()
+    }
+
      win.location = base + handles[i];
-     if (i++ > 2) {
+     if (i++ > handles.length - 1) {
+      //localStorage.setItem('followList', followList)
+      if (request.command === 'nuclear') {
+        chrome.runtime.sendMessage({
+         lastSession: Date.now(),
+         command: 'nuclear'
+        });
+      }
+
       clearInterval(interval)
      }
   }, 60000)
@@ -79,7 +102,7 @@ var int = setInterval(() => {
 
   win.location = list[i] + "/?count=" + count;
   //check value of i and increment, if reached the max value then clear the interval
-  if (i++ >= Number(settings['max']) - 1) {
+  if (i++ >= Number(settings['max'])) {
      clearInterval(int)
      console.log("followed:" + count )
      //send message to update Followed
@@ -90,16 +113,66 @@ var int = setInterval(() => {
 }, 30000)
 }
 
-//## Click button to start scraping followers
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+function countFollows() {
+  var base = "https://www.instagram.com/"
+  var count = 0;
+  var followGained = 0
+  var handles = localStorage.getItem('followList').split(",") //TODO: should be based on follow group
+  var params = {'gainedFollowers': 0, 'command': 'counted-followers'}
+  if (handles === undefined) {
+    return console.log('no followed list')
+  }
+
+  var urlList = handles.map(handle => base + handle + "/");
+  const win = window.open(urlList[0], "_blank");
+  var clearLoop = setInterval(() => {
+    if (win.document.querySelector('#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button') !== null) {
+      if (win.document.querySelector('#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button').innerHTML === 'Follow Back') {
+        params['gainedFollowers'] = followGained++
+      }
+    }
+
+     win.location = urlList[count]
+     if (count++ >= handles.length - 1) {
+       console.log(params)
+       chrome.runtime.sendMessage({
+        gainedFollowers: params
+       });
+      clearInterval(clearLoop)
+     }
+  }, 3000)
+}
+
+ function grabFollowing() {
+   var scrollCount = 1000;
+   document.querySelector('#react-root > section > main > div > header > section > ul > li:nth-child(3) > a').click()
+   var cancel = setInterval(function(){
+       document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP').scroll({
+         top: scrollCount,
+         left: 0,
+         behavior: 'smooth'
+       })
+       scrollCount = scrollCount + 150
+   }, 3000) }
+
+ function cleanPayload(list, quantity) {
+   var humanPayload = Array.from(list)
+   var cleaned = humanPayload.map(x => x.innerText.split('\n')[0]);
+   cleaned = cleaned.slice(0, Number(quantity))
+   return cleaned
+ }
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request['command'] === 'follow') {
+    if (window.location.href.includes(request['handle'])) {
     console.log(request) //{follow: "15", max: "100", days: "1", handle: "mr.sanders", redirect_url: "https://www.instagram.com/mr.sanders"}
     document.querySelector("#react-root > section > main > div > header > section > ul > li:nth-child(2) > a").click()
     var scrollCount = 1000;
     var numberOfFollowers = 0;
     var checkFollowers = 0;
     var done = false;
-
+    var followerPayLoad;
+    localStorage.setItem('followList', [])  //reset follow list  TODO: Change reset follow list
     //scrolling
     var cancel = setInterval(function(){
       document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP').scroll({
@@ -117,28 +190,64 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
       clearInterval(cancel)
       //capture followers
       if (done) {
-        humanPayload = document.querySelectorAll('body > div.RnEpo.Yx5HN > div > div.isgrP > ul > div > li')
-        humanPayload = Array.from(humanPayload)
-        cleanPayload = humanPayload.map(x => x.innerText.split('\n')[0]);
+        checkFollowers = document.querySelectorAll('body > div.RnEpo.Yx5HN > div > div.isgrP > ul > div > li')
+        followerPayLoad = cleanPayload(checkFollowers, request['max'])
+        localStorage.setItem('followList' + request['counting'], followerPayLoad + '')
 
-        //save then use the payload to kick off bigfollow
-        chrome.storage.sync.set({'followList': cleanPayload}, function (){
-          console.log("successfully set");
+       //send followers to background
+        chrome.runtime.sendMessage({
+          followers: followerPayLoad,
+          counting: request['counting']
         });
         //start following
-        bigFollow(cleanPayload, request);
+        bigFollow(followerPayLoad, request);
         // copy(cleanPayload)
       }
     }
     }, 3000);
+  } else if (window.location.href.includes(request['handle']) === false) {
+      alert('please try again from: www.instagram.com/' + request['handle'])
+   }
   } else if (request['command'] === 'unfollow') {
-    unfollow();
+
+      unfollow(request);
+
+  } else if (request['command'] === 'count-follows') {
+
+      countFollows(request.listNumber);
+
+  } else if (request['command'] === 'nuclear') {
+    //TODO: make it say, hey you have to be on some url
+    if (window.location.href.includes(request.handle)) {
+      document.querySelector('#react-root > section > main > div > header > section > ul > li:nth-child(3) > a').click();
+      var sCount = 1000;
+      var nfollowers = 0;
+      var cFollowers = 0;
+      var done = false;
+      //scrolling
+      var cancel = setInterval(function(){
+        document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP').scroll({
+          top: sCount,
+          left: 0,
+          behavior: 'smooth'
+       });
+
+      sCount = sCount + 150
+      cFollowers = document.querySelectorAll('body > div.RnEpo.Yx5HN > div > div.isgrP > ul > div > li').length
+      if (cFollowers > 100) {
+        done = true
+        clearInterval(cancel)
+        if (done){
+          cFollowers = document.querySelectorAll('body > div.RnEpo.Yx5HN > div > div.isgrP > ul > div > li')
+          var unfollowerPayLoad = cleanPayload(cFollowers, 100)
+          request['unfollowPayload'] = unfollowerPayLoad
+          unfollow(request)
+        }
+      }
+    }, 3000);
+   }
   }
-
-});
-
-
-
+ });
 
 // }
 
@@ -146,5 +255,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 
 
   //capturing data
-
-// });

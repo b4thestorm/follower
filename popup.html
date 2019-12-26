@@ -11,20 +11,21 @@
     <div class="tab">
       <button class="tablinks" id="follows">Follow</button>
       <button class="tablinks" id="unfollows">Unfollow</button>
+      <button class="tablinks" id="followNoOne">Kanye</button>
     </div>
     <div class="container-fluid main">
       <div class="tabcontent" id='follows-1'>
         <div class='row'>
         <div class='count-window' style="margin-left: 100px;">
-        <h5>Followed</h5>
+        <h5>Latest Followed</h5>
           <span class="window-display border shadow-secondary fs-gamma" style="background-color:white;" id="followed">
-            100
+            0
           </span>
         </div>
         <div class='count-window'style="margin-left: 100px;">
           <h5>Followers Gained</h5>
             <span class="window-display border shadow-secondary fs-gamma" style="background-color:white;" id="followGained">
-              100
+              0
             </span>
         </div>
       </div>
@@ -47,35 +48,69 @@
       </div>
       <select class="custom-select" id="maxPerDay">
         <option selected>Choose...</option>
+        <option value="3">3 follows</option>
         <option value="100">100 follows</option>
         <option value="200">200 follows</option>
         <option value="300">300 follows</option>
-        <option value="400">400 follows</option>
-        <option value="500">500 follows</option>
       </select>
      </div>
       <div class="input-group input-group-sm mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="inputGroup-sizing-sm">Follow By Handle</span>
+          <span class="input-group-text" id="inputGroup-sizing-sm">Handle to Follow</span>
         </div>
          <input type="text" class="form-control" id="followHandle" aria-describedby="inputGroup-sizing-sm">
       </div>
 
 
-      <button type="button" class="btn btn-light trigger" id="update">Update</button>
+      <button type="button" class="btn btn-light trigger" id="update">Count Gains</button>
       <button type="button" class="btn btn-success trigger" id="follow">Follow</button>
     </div>
     <div class="tabcontent" id='unfollows-1'>
+      <p>Unfollow Groups</p>
       <form class="form form--large">
-       <div class="form__item">
+        <label><input type="radio" name="unfollowGroup" id="grp1" value="1"> group 1 </label>
+        <label><input type="radio" name="unfollowGroup" id="grp2" value="2"> group 2 </label>
+        <label><input type="radio" name="unfollowGroup" id="grp3" value="3"> group 3 </label>
+        <button type="button" class="button button--small button--color-red" id="clrgrp">Clear Group</button>
+         <div class="form__item">
+           <label for="form_id" class="form__label"># to Unfollow</label>
+           <input id="toUnfollow" type="text" name="form_id" placeholder="Label" class="form__input">
+         </div>
+         <hr>
         <textarea name="textarea_read_only" id="followWindow textarea_read_only" readonly rows="10" class="form__textarea has-value"></textarea>
-          <label for="textarea_read_only" class="form__label">Followed</label>
-        </div>
+        <label for="textarea_read_only" class="form__label" id="followLabel">Followed</label>
       </form>
       <button type="button" class="button  button--color-violet button--basic button--wide" id="unfollow">Unfollow Recent</button>
     </div>
-
+    <div class="tabcontent" id='followNoOne-1'>
+      <div class='row'>
+        <div class='count-window' style="margin-left: 100px;">
+          <h5>Following</h5>
+          <span class="window-display border shadow-secondary fs-gamma" style="background-color:white;" id="following">
+            0
+          </span>
+       </div>
+        <div class='count-window' style="margin-left: 100px;">
+        <h5>Last Ran</h5>
+          <span class="window-display border shadow-secondary fs-gamma" style="background-color:white;" id="lastSession">
+            0
+          </span>
+        </div>
+       <!-- <div class="form__item">
+         <input id="myHandle" type="text" name="form_id" placeholder="Label" class="form__input">
+         <label for="form_id" class="form__label">My Handle</label>
+       </div> -->
+     </br>
+       <div class="input-group input-group-sm mb-3">
+         <div class="input-group-prepend">
+           <span class="input-group-text" id="inputGroup-sizing-sm">My Handle</span>
+         </div>
+          <input type="text" class="form-control" id="myHandle" aria-describedby="inputGroup-sizing-sm">
+       </div>
+        <button type="button" class="button  button--color-red button--basic button--wide" id="nuclear-option">Run Unfollow Session</button>
+     </div>
     </div>
+  </div>
 
   </body>
 </html>
