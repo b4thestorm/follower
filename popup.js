@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
      var number = Number(localStorage.getItem('followGroupCount'))
      if (number < 3) {
        localStorage.setItem('followGroupCount', number + 1) //won't go over 3
+     } else if (number === 3) {
+       localStorage.setItem('followGroupCount', 1)
      }
   }
  }
@@ -108,6 +110,27 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     })
 
+    function lastFollowTime(timeAgo) {
+      if (timeAgo === null) {
+        return 0 + 'mins ago'
+      }
+
+      var timeDifference =  Date.now() - timeAgo
+      var time = Math.floor(timeDifference/3600000);
+      if (time < 1 ) {
+        time = Math.floor((timeDifference/1000)/60);
+        return time + 'mins ago'
+      } else if (time >= 1) {
+        if (time === 1) {
+          return time + 'hour ago'
+        } else {
+          return time + 'hours ago'
+        }
+      } else {
+         return 0 + 'mins ago'
+      }
+    }
+
     function fillRecentWindow(counter) {
       followWindow = document.querySelector('textarea');
       followers  = localStorage.getItem('followList' + counter)
@@ -122,10 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
      var unfollowRadios = document.getElementsByName('unfollowGroup');
      for (radio in unfollowRadios) {
        unfollowRadios[radio].onclick = function() {
+         time = localStorage.getItem('lastFollowed' + this.value)
+         document.getElementById('lastFollowed').innerHTML = lastFollowTime(time)
          fillRecentWindow(this.value)
        }
      }
 
+     //returns the time group limit
+     //grabs the time from localStorage and sets it to lastfollowed innerHTML
      function selectedGroupLimit() {
        var group1 = document.getElementById('grp1');
        var group2 = document.getElementById('grp2');
@@ -134,10 +161,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
        if (group1.checked === true) {
          list = localStorage.getItem('followList1')
+         // time = localStorage.getItem('lastFollowed1')
+         // document.getElementById('lastFollowed').innerHTML = lastFollowTime(time)
        } else if (group2.checked === true) {
          list = localStorage.getItem('followList2')
+         // time = localStorage.getItem('lastFollowed2')
+         // document.getElementById('lastFollowed').innerHTML = lastFollowTime(time)
        } else if (group3.checked === true) {
          list = localStorage.getItem('followList3')
+         // time = localStorage.getItem('lastFollowed3')
+         // document.getElementById('lastFollowed').innerHTML = lastFollowTime(time)
        }
       return list.split(',').length
      }
@@ -210,21 +243,9 @@ document.addEventListener('DOMContentLoaded', function() {
   //TODO: fix time counter for lastSession
     if (localStorage.getItem('lastSession') !== null ) {
       var unixTime = localStorage.getItem('lastSession')
-      var timeDifference =  Date.now() - unixTime
-      var time = Math.floor(timeDifference/3600000)
-      if (time < 1 ) {
-        time = Math.floor((timeDifference/1000)/60)
-        document.getElementById('lastSession').innerHTML = time + 'mins ago'
-      } else {
-        if (time === 1){
-          document.getElementById('lastSession').innerHTML = time + 'hour ago'
-        } else {
-          document.getElementById('lastSession').innerHTML = time + 'hours ago'
-        }
-      }
-    } else {
-      document.getElementById('lastSession').innerHTML = 0 + 'mins ago'
+      document.getElementById('lastSession').innerHTML = lastFollowTime(unixTime)
     }
+
 
 /////Installation stuff
 

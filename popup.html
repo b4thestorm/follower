@@ -71,7 +71,7 @@
         <label><input type="radio" name="unfollowGroup" id="grp1" value="1"> group 1 </label>
         <label><input type="radio" name="unfollowGroup" id="grp2" value="2"> group 2 </label>
         <label><input type="radio" name="unfollowGroup" id="grp3" value="3"> group 3 </label>
-        <button type="button" class="button button--small button--color-red" id="clrgrp">Clear Group</button>
+        <span style="left: 90px;position: relative;" id="lastFollowed"></span>
          <div class="form__item">
            <label for="form_id" class="form__label"># to Unfollow</label>
            <input id="toUnfollow" type="text" name="form_id" placeholder="Label" class="form__input">
@@ -80,7 +80,8 @@
         <textarea name="textarea_read_only" id="followWindow textarea_read_only" readonly rows="10" class="form__textarea has-value"></textarea>
         <label for="textarea_read_only" class="form__label" id="followLabel">Followed</label>
       </form>
-      <button type="button" class="button  button--color-violet button--basic button--wide" id="unfollow">Unfollow Recent</button>
+      <button type="button" class="button button--color-red" id="clrgrp">Clear Group</button>
+      <button type="button" class="btn btn-success" id="unfollow">Unfollow Recent</button>
     </div>
     <div class="tabcontent" id='followNoOne-1'>
       <div class='row'>

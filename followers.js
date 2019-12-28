@@ -106,6 +106,9 @@ var int = setInterval(() => {
      clearInterval(int)
      console.log("followed:" + count )
      //send message to update Followed
+     chrome.runtime.sendMessage({
+      lastFollowed: Date.now()
+     });
      chrome.storage.sync.set({'count': count}, function (){
        alert('finished with success');
      })
