@@ -116,12 +116,18 @@ var int = setInterval(() => {
 }, 30000)
 }
 
-function countFollows() {
+function countFollows(listNumber) {
   var base = "https://www.instagram.com/"
   var count = 0;
   var followGained = 0
-  var handles = localStorage.getItem('followList').split(",") //TODO: should be based on follow group
+  var handles = localStorage.getItem('followList' + listNumber)
+   if (handles === null) {
+     return alert('No list to Follow');
+   } else {
+     handles = handles.split(",")
+   }
   var params = {'gainedFollowers': 0, 'command': 'counted-followers'}
+
   if (handles === undefined) {
     return console.log('no followed list')
   }
@@ -218,7 +224,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   } else if (request['command'] === 'count-follows') {
 
       countFollows(request.listNumber);
-
+  } else if (request['command'] === 'clear group') {
+      //clear cache for list
+      localStorage.removeItem('followList' + request.listNumber)
   } else if (request['command'] === 'nuclear') {
     //TODO: make it say, hey you have to be on some url
     if (window.location.href.includes(request.handle)) {

@@ -44,12 +44,23 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('followGroupCount', 1)
   } else {
      var number = Number(localStorage.getItem('followGroupCount'))
-     if (number < 3) {
+     if (number < 4) {
        localStorage.setItem('followGroupCount', number + 1) //won't go over 3
-     } else if (number === 3) {
+     } else if (number === 4) {
        localStorage.setItem('followGroupCount', 1)
      }
   }
+ }
+
+ function selectedGroup(groupName) {
+   var radios = Array.prototype.slice.call(document.getElementsByName(groupName))
+   var selected = []
+   radios.forEach(function(radio) {
+     if (radio.checked === true) {
+       selected.push(radio)
+     }
+  })
+  return selected[0].value
  }
 
 
@@ -102,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('update').addEventListener('click', function(event){
       //whatever global variable counting is currently set to.
-      params = {'command': 'count-follows', 'listNumber': counting}
+      params = {'command': 'count-follows', 'listNumber': selectedGroup('gainGroup')}
       if (counting !== 0) {
         chrome.tabs.query({active:true, currentWindow: true}, function(tabs) {
           chrome.tabs.sendMessage(tabs[0].id, params)
@@ -175,16 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return list.split(',').length
      }
 
-     function selectedGroup() {
-       var radios = Array.prototype.slice.call(document.getElementsByName('unfollowGroup'))
-       var selected = []
-       radios.forEach(function(radio) {
-         if (radio.checked === true) {
-           selected.push(radio)
-         }
-      })
-      return selected[0].value
-     }
+
 
      function quantityUnFollow() {
        var limit = selectedGroupLimit();
@@ -203,18 +205,26 @@ document.addEventListener('DOMContentLoaded', function() {
       var group2 = document.getElementById('grp2');
       var group3 = document.getElementById('grp3');
       var list;
+      params = {'command': 'clear group', 'listNumber': selectedGroup('unfollowGroup')}
 
       if (group1.checked === true) {
         localStorage.removeItem('followList1')
+        params['listNumber'] = '1'
       } else if (group2.checked === true) {
         localStorage.removeItem('followList2')
+        params['listNumber'] = '2'
       } else if (group3.checked === true) {
         localStorage.removeItem('followList3')
+        params['listNumber'] = '3'
       }
+
+      chrome.tabs.query({active:true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, params)
+      })
     })
 
     document.getElementById('unfollow').addEventListener('click', function(event){
-      params['listCount'] = selectedGroup();
+      params['listCount'] = selectedGroup('unfollowGroup');
       params['quantityUnfollow'] = quantityUnFollow();
       params['command'] = 'unfollow';
       //params['myHandle'] = myHandle;

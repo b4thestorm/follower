@@ -11,7 +11,7 @@
     <div class="tab">
       <button class="tablinks" id="follows">Follow</button>
       <button class="tablinks" id="unfollows">Unfollow</button>
-      <button class="tablinks" id="followNoOne">Kanye</button>
+      <button class="tablinks" id="followNoOne">Follow No One</button>
     </div>
     <div class="container-fluid main">
       <div class="tabcontent" id='follows-1'>
@@ -60,10 +60,16 @@
         </div>
          <input type="text" class="form-control" id="followHandle" aria-describedby="inputGroup-sizing-sm">
       </div>
+      <button type="button" class="btn btn-success trigger2" id="follow">Follow</button>
+      <hr>
+      <fieldset>
+       <legend style="font-weight:10px">Follows Gained</legend>
+       <label><input type="radio" name="gainGroup" id="group1" value="1"> group 1 </label>
+       <label><input type="radio" name="gainGroup" id="group2" value="2"> group 2 </label>
+       <label><input type="radio" name="gainGroup" id="group3" value="3"> group 3 </label>
+       <button type="button" class="btn btn-light trigger1" id="update">Count Gains</button>
+     </fieldset>
 
-
-      <button type="button" class="btn btn-light trigger" id="update">Count Gains</button>
-      <button type="button" class="btn btn-success trigger" id="follow">Follow</button>
     </div>
     <div class="tabcontent" id='unfollows-1'>
       <p>Unfollow Groups</p>
@@ -97,10 +103,6 @@
             0
           </span>
         </div>
-       <!-- <div class="form__item">
-         <input id="myHandle" type="text" name="form_id" placeholder="Label" class="form__input">
-         <label for="form_id" class="form__label">My Handle</label>
-       </div> -->
      </br>
        <div class="input-group input-group-sm mb-3">
          <div class="input-group-prepend">

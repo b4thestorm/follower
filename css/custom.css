@@ -20,9 +20,16 @@ body {
     margin: 6px;
   }
 
-.trigger {
+.trigger1 {
   position: relative;
-  left: 200px;
+  left: 90px;
+  margin-bottom: 10px;
+}
+
+.trigger2 {
+  position: relative;
+  left: 350px;
+  bottom: 0px;
   margin-bottom: 10px;
 }
 

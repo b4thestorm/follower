@@ -1,7 +1,7 @@
 {
 "manifest_version": 2,
 "name": "InstaGarden",
-"version": "0.0.0.13",
+"version": "0.0.1.0",
 "description": "gain real followers while not getting blocked on Instagram",
 "icons": {
   "16": "images/logoa16x16.jpg",
