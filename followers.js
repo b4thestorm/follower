@@ -1,4 +1,7 @@
 //this is a content script -  need to exchange messages from content script and background script
+function randomFollowInterval(time) {
+  return Math.floor(Math.random() * parseInt(time,10)) * 1000
+}
 
 function unfollow(request) {
   var handles;
@@ -101,6 +104,7 @@ var int = setInterval(() => {
   }
 
   win.location = list[i] + "/?count=" + count;
+
   //check value of i and increment, if reached the max value then clear the interval
   if (i++ >= Number(settings['max'])) {
      clearInterval(int)
@@ -113,7 +117,8 @@ var int = setInterval(() => {
        alert('finished with success');
      })
    }
-}, 30000)
+   //randomFollowInterval(settings['followSpeed'])
+}, 2000)
 }
 
 function countFollows(listNumber) {
@@ -127,6 +132,7 @@ function countFollows(listNumber) {
      handles = handles.split(",")
    }
   var params = {'gainedFollowers': 0, 'command': 'counted-followers'}
+  var followedBack = []
 
   if (handles === undefined) {
     return console.log('no followed list')
@@ -138,12 +144,14 @@ function countFollows(listNumber) {
     if (win.document.querySelector('#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button') !== null) {
       if (win.document.querySelector('#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button').innerHTML === 'Follow Back') {
         params['gainedFollowers'] = followGained++
+        followedBack.push(handles[count])
       }
     }
 
      win.location = urlList[count]
      if (count++ >= handles.length - 1) {
        console.log(params)
+       params['followedBack'] = followedBack
        chrome.runtime.sendMessage({
         gainedFollowers: params
        });

@@ -20,6 +20,7 @@
   "scripts": ["background.js"],
   "persistent": false
 },
+"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn46o5d0EjCDyfX1dyn5ZB+eOpk7dCrEOc0Wjsk3yKs03JasV7FjhJoY85MCEQ2ldnV8irD7m3zC2WVq9jc0r/FAcWw2z3piNzX7n7K+gA7D+W17FSB8o5PeNRtLfLLDtcSPutQ+duPLxzMR/g7lBk9nZiJZ3AILM8lwVXCQj0Zt6zPeOQWffos2RY/cqvHfobx9ivZtvX6DtBZ/BIkDZVvkjaGaJeHBoiSVA/2+1O5QXYdVpQi99HenGObvdD9OyjSLO7EBZilVNcUryOUdVoDf/pInIgUOT/rLBPqDj7lh/F96McdYmtLlarF35lNvV1Lx2ZKaU9vT+bn2pfZySNwIDAQAB"
 ,
 "oauth2": {

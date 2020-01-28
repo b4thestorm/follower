@@ -12,6 +12,18 @@ document.addEventListener('DOMContentLoaded', function() {
    var authToken;
    var counting;
 
+
+   var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-G8RXY60EVS']);
+    _gaq.push(['_trackPageview']);
+
+ (function() {
+   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+   ga.src = 'https://ssl.google-analytics.com/ga.js';
+   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+
+
    if (localStorage.getItem('followGroupCount') === null) {
      localStorage.setItem('followGroupCount', 0)
    }
@@ -63,6 +75,10 @@ document.addEventListener('DOMContentLoaded', function() {
   return selected[0].value
  }
 
+ function trackButton(event_type) {
+  _gaq.push(['_trackEvent', 'button' + event_type, 'clicked']);
+ };
+
 
    if (chrome.storage.sync.get('count', function(data) { data['count'] })) {
      document.getElementById('followed').innerHTML = chrome.storage.sync.get('count', function(data) { data['count'] })
@@ -83,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     followHandle = document.getElementById('followHandle').value
     counting = localStorage.getItem('followGroupCount')
     url = 'https://www.instagram.com/' + followHandle
+    trackButton('follow')
 
       params['follow'] = followSpeed
       params['max'] = maxPerDay
@@ -98,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
      // var url = 'https://www.instagram.com/' + params['handle']
      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, params);
-      });
+     });
     });
 
     //count followers gained
@@ -256,7 +273,6 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('lastSession').innerHTML = lastFollowTime(unixTime)
     }
 
-
 /////Installation stuff
 
     chrome.identity.getAuthToken({'interactive': true}, function(token) {
@@ -293,8 +309,8 @@ document.addEventListener('DOMContentLoaded', function() {
          req.send();
 
 
-
     });
+
 
 
 
